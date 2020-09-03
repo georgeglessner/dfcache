@@ -59,6 +59,9 @@ class dfcache {
     }
 
     /**
+     * update
+     *
+     * Update key with new value if key exists
      *
      * @param {*} key cache key
      * @param {*} value key value
