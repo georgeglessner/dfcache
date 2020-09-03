@@ -1,9 +1,10 @@
-    .___ _____                    .__            
-  __| _// ____\____ _____    ____ |  |__   ____  
- / __ |\   __\/ ___\\__  \ _/ ___\|  |  \_/ __ \ 
-/ /_/ | |  | \  \___ / __ \\  \___|   Y  \  ___/ 
-\____ | |__|  \___  >____  /\___  >___|  /\___  >
-     \/           \/     \/     \/     \/     \/ 
+   
+        .___ _____                    .__            
+      __| _// ____\____ _____    ____ |  |__   ____  
+     / __ |\   __\/ ___\\__  \ _/ ___\|  |  \_/ __ \ 
+    / /_/ | |  | \  \___ / __ \\  \___|   Y  \  ___/ 
+    \____ | |__|  \___  >____  /\___  >___|  /\___  >
+         \/           \/     \/     \/     \/     \/ 
 
 ---
 
@@ -19,7 +20,7 @@ const myCache = new cache();
 ```
 
 ### Options (Under Development)
-`updateTime`: Time in seconds between a check for keys in need of deletion. (default: 60) 
+`updateTime`: Time in seconds between a check for keys in need of deletion. (default: 60)  
 `ttl`: Time in seconds for the cache to live. (default: 0 - unlimited)
 
 Add key and value to cache
