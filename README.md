@@ -15,7 +15,7 @@ Dependency-free cache for Node.js applications.
 import package and initialize cache
 
 ```
-const cache = require('../../dfcache');
+const cache = require('path/to/dfcache');
 const myCache = new cache();
 ```
 
