@@ -1,4 +1,4 @@
-/**
+/***************************************************
     .___ _____                    .__            
   __| _// ____\____ _____    ____ |  |__   ____  
  / __ |\   __\/ ___\\__  \ _/ ___\|  |  \_/ __ \ 
@@ -7,24 +7,25 @@
      \/           \/     \/     \/     \/     \/ 
 
      Dependency-free cache for Node.js
- **/
+ ***************************************************/
+
 class dfcache {
     /**
-     * contructor
      * 
-     * updatetime - time in seconds between updates to cache
-     * ttl - time for cache to live
+     * updatetime - time in seconds between updates to cache Default: 60
+     * ttl - time for cache to live. Default: 0 (unlimited)
      * 
      * @param {Object} obj 
      */
-    constructor(obj) {
+    constructor(obj={}) {
         this.cache = {};
         this.updateTime = obj.checkTime || 60;
         this.ttl = obj.ttl || 0;
+
+        // TODO: Add events for timeouts 
     }
 
     /**
-     * add
      *
      * Adds key to cache if it does not exist already
      *
@@ -34,23 +35,23 @@ class dfcache {
      */
     async add(key, value, ttl = 0) {
         if (!this.cache[key]) {
-            return (this.cache[key] = value);
+            return (this.cache[key] = {value, ttl});
         }
     }
 
     /**
-     * get
      *
      * Get value of key if it exists
      *
      * @param {*} key cache key
      */
     async get(key) {
-        return this.cache[key];
+        if(this.cache[key]) {
+            return this.cache[key]['value'];
+        }
     }
 
     /**
-     * clear
      *
      * Clear entire cache
      */
@@ -59,7 +60,6 @@ class dfcache {
     }
 
     /**
-     * update
      *
      * Update key with new value if key exists
      *
@@ -69,12 +69,16 @@ class dfcache {
      */
     async update(key, value, ttl) {
         if (this.cache[key]) {
-            this.cache[key] = value;
+            if(this.cache[key]['ttl'] && !ttl) {
+                ttl = this.cache[key]['ttl'];
+                // TODO: add event for ttl
+                return this.cache[key] = {value,  ttl}
+            } 
+            return this.cache[key] = {value, ttl};
         }
     }
 
     /**
-     * delete
      *
      * Delete key and value
      *
