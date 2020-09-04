@@ -92,6 +92,16 @@ class dfcache extends Emitter {
      */
     delete(key) {
         delete this.cache[key];
+    }
+
+    /**
+     *
+     * Expire key and value
+     *
+     * @param {*} key key value
+     */
+    expireKey(key) {
+        this.delete(key);
         this.cacheEvent.emit('expired', key);
     }
 
@@ -113,7 +123,7 @@ class dfcache extends Emitter {
      * @param {int} ttl time to live
      */
     setKeyExpiration(key, ttl) {
-        setTimeout(() => { this.delete(key) }, ttl * 1000);
+        setTimeout(() => { this.expireKey(key) }, ttl * 1000);
     }
 }
 
