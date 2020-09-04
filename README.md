@@ -20,7 +20,6 @@ const myCache = new cache();
 ```
 
 ### Options (Under Development)
-`updateTime`: Time in seconds between a check for keys in need of deletion. (default: 60)  
 `ttl`: Time in seconds for the cache to live. (default: 0 - unlimited)
 
 Add key and value to cache
@@ -48,3 +47,16 @@ Clear cache
 ```
 myCache.clear();
 ```
+
+check for events
+```
+myCache.cacheEvent.on('expired', (key) => {
+    console.log(`${key} has expired`);
+})
+```
+
+### List of Events (Under development)
+
+`purged`: sent when cache has been cleared. 
+
+`expired`: sent when key has expired. Returns expired key. 

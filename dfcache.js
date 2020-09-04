@@ -9,20 +9,22 @@
      Dependency-free cache for Node.js
  ***************************************************/
 
-class dfcache {
+const Emitter = require('events').EventEmitter
+
+class dfcache extends Emitter {
     /**
      * 
-     * updatetime - time in seconds between updates to cache Default: 60
      * ttl - time for cache to live. Default: 0 (unlimited)
      * 
      * @param {Object} obj 
      */
-    constructor(obj={}) {
+    constructor(obj = {}) {
+        super();
         this.cache = {};
-        this.updateTime = obj.checkTime || 60;
         this.ttl = obj.ttl || 0;
+        this.cacheEvent = new Emitter();
 
-        // TODO: Add events for timeouts 
+        this.setCachePurge(this.ttl);
     }
 
     /**
@@ -33,9 +35,12 @@ class dfcache {
      * @param {*} value value assigned to key
      * @param {int} ttl time to live for key (seconds)
      */
-    async add(key, value, ttl = 0) {
+    add(key, value, ttl = 0) {
         if (!this.cache[key]) {
-            return (this.cache[key] = {value, ttl});
+            if (ttl > 0) {
+                this.setKeyExpiration(key, ttl);
+            }
+            return (this.cache[key] = { value, ttl });
         }
     }
 
@@ -45,8 +50,8 @@ class dfcache {
      *
      * @param {*} key cache key
      */
-    async get(key) {
-        if(this.cache[key]) {
+    get(key) {
+        if (this.cache[key]) {
             return this.cache[key]['value'];
         }
     }
@@ -55,8 +60,9 @@ class dfcache {
      *
      * Clear entire cache
      */
-    async clear() {
+    clear() {
         this.cache = {};
+        this.cacheEvent.emit('purged');
     }
 
     /**
@@ -67,14 +73,14 @@ class dfcache {
      * @param {*} value key value
      * @param {int} ttl time to live for key (seconds)
      */
-    async update(key, value, ttl) {
+    update(key, value, ttl) {
         if (this.cache[key]) {
-            if(this.cache[key]['ttl'] && !ttl) {
+            if (this.cache[key]['ttl'] && !ttl) {
                 ttl = this.cache[key]['ttl'];
-                // TODO: add event for ttl
-                return this.cache[key] = {value,  ttl}
-            } 
-            return this.cache[key] = {value, ttl};
+                return this.cache[key] = { value, ttl }
+            }
+            this.setKeyExpiration(key, ttl);
+            return this.cache[key] = { value, ttl };
         }
     }
 
@@ -84,8 +90,30 @@ class dfcache {
      *
      * @param {*} key key value
      */
-    async delete(key) {
+    delete(key) {
         delete this.cache[key];
+        this.cacheEvent.emit('expired', key);
+    }
+
+    /**
+     * 
+     * Clear cache after given ttl
+     * 
+     * @param {int} ttl time to live
+     */
+    setCachePurge(ttl) {
+        setTimeout(() => { this.clear() }, ttl * 1000);
+    }
+
+    /**
+     * 
+     * Delete key after given ttl
+     * 
+     * @param {*} key value of key
+     * @param {int} ttl time to live
+     */
+    setKeyExpiration(key, ttl) {
+        setTimeout(() => { this.delete(key) }, ttl * 1000);
     }
 }
 
