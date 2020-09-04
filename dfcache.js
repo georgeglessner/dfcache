@@ -9,14 +9,14 @@
      Dependency-free cache for Node.js
  ***************************************************/
 
-const Emitter = require('events').EventEmitter
+const Emitter = require("events").EventEmitter;
 
 class dfcache extends Emitter {
     /**
-     * 
+     *
      * ttl - time for cache to live. Default: 0 (unlimited)
-     * 
-     * @param {Object} obj 
+     *
+     * @param {Object} obj
      */
     constructor(obj = {}) {
         super();
@@ -52,7 +52,7 @@ class dfcache extends Emitter {
      */
     get(key) {
         if (this.cache[key]) {
-            return this.cache[key]['value'];
+            return this.cache[key]["value"];
         }
     }
 
@@ -62,7 +62,7 @@ class dfcache extends Emitter {
      */
     clear() {
         this.cache = {};
-        this.cacheEvent.emit('purged');
+        this.cacheEvent.emit("purged");
     }
 
     /**
@@ -75,12 +75,15 @@ class dfcache extends Emitter {
      */
     update(key, value, ttl) {
         if (this.cache[key]) {
-            if (this.cache[key]['ttl'] && !ttl) {
-                ttl = this.cache[key]['ttl'];
-                return this.cache[key] = { value, ttl }
+            if (this.cache[key]["ttl"] && !ttl) {
+                ttl = this.cache[key]["ttl"];
+                this.cache[key] = { value, ttl };
+                return;
             }
-            this.setKeyExpiration(key, ttl);
-            return this.cache[key] = { value, ttl };
+            if (ttl > 0) {
+                this.setKeyExpiration(key, ttl);
+            }
+            this.cache[key] = { value, ttl };
         }
     }
 
@@ -96,34 +99,57 @@ class dfcache extends Emitter {
 
     /**
      *
+     * List all keys in cache as an array
+     *
+     */
+    listKeys() {
+        return Object.keys(this.cache);
+    }
+
+    /**
+     * 
+     * Check if key exists in cache
+     * 
+     * @param {*} key 
+     */
+    keyExists(key) {
+        return key in this.cache;
+    }
+
+    /**
+     *
      * Expire key and value
      *
      * @param {*} key key value
      */
     expireKey(key) {
         this.delete(key);
-        this.cacheEvent.emit('expired', key);
+        this.cacheEvent.emit("expired", key);
     }
 
     /**
-     * 
+     *
      * Clear cache after given ttl
-     * 
+     *
      * @param {int} ttl time to live
      */
     setCachePurge(ttl) {
-        setTimeout(() => { this.clear() }, ttl * 1000);
+        setTimeout(() => {
+            this.clear();
+        }, ttl * 1000);
     }
 
     /**
-     * 
+     *
      * Delete key after given ttl
-     * 
+     *
      * @param {*} key value of key
      * @param {int} ttl time to live
      */
     setKeyExpiration(key, ttl) {
-        setTimeout(() => { this.expireKey(key) }, ttl * 1000);
+        setTimeout(() => {
+            this.expireKey(key);
+        }, ttl * 1000);
     }
 }
 

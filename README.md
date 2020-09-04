@@ -48,6 +48,16 @@ Clear cache
 myCache.clear();
 ```
 
+List keys
+```
+myCache.listKeys();
+```
+
+Check if key exists
+```
+myCache.keyExists(key);
+```
+
 check for events
 ```
 myCache.cacheEvent.on('expired', (key) => {

@@ -7,6 +7,6 @@
 
 ## Functions
 - [ ] add / get / delete multiple keys at a time
-- [ ] list keys
-- [ ] check if key exists in cache 
+- [x] list keys
+- [x] check if key exists in cache 
 
