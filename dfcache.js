@@ -24,7 +24,9 @@ class dfcache extends Emitter {
         this.ttl = obj.ttl || 0;
         this.cacheEvent = new Emitter();
 
-        this.setCachePurge(this.ttl);
+        if(this.ttl) {
+            this.setCachePurge(this.ttl);
+        }
     }
 
     /**
